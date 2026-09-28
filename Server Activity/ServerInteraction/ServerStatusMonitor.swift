@@ -20,10 +20,9 @@ class ServerStatusMonitor: ObservableObject {
     func startPolling() {
         var interval = UserDefaults.standard.integer(forKey: "pollingFrequency")
         
-        print(interval)
         
-        if (interval <= 0) {
-            interval = 5
+        if (interval < 1) {
+            interval = Constants.pollingFrequency
         }
         
         timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(interval), repeats: true)

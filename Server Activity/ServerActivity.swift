@@ -6,7 +6,6 @@ import SwiftUI
     var body: some Scene {
         MenuBarExtra(
             "\(monitor.status?.players?.online ?? 0)/\(monitor.status?.players?.max ?? 0)",
-            image: "steve-default"
         ) {
             NavigatedContent(displays: $monitor.playerDisplays)
         }.menuBarExtraStyle(.window)
