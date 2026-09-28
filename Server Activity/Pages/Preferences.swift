@@ -29,16 +29,16 @@ struct Preferences: View {
                     setLaunchAtLogin(newValue)
                 }
 
-            GridRow {
-                HStack {
-                    Stepper(
-                        "Menu Bar Heads to Show",
-                        value: $headsToShow,
-                        in: 1...20
-                    )
-                    Text(headsToShow.formatted())
-                }
-            }.padding(5).contentMargins(5)
+//            GridRow {
+//                HStack {
+//                    Stepper(
+//                        "Menu Bar Heads to Show",
+//                        value: $headsToShow,
+//                        in: 1...20
+//                    )
+//                    Text(headsToShow.formatted())
+//                }
+//            }.padding(5).contentMargins(5)
             GridRow {
                 HStack {
                     Stepper(
