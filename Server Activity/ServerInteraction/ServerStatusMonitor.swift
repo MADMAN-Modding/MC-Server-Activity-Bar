@@ -33,12 +33,12 @@ class ServerStatusMonitor: ObservableObject {
                     let host =
                     UserDefaults.standard.string(forKey: "serverAddress")
                     ?? ""
+                    
                     guard !host.isEmpty else { return }
                     
                     let status = try await Networking.fetchServerStatus(
                         host: host
                     )
-                    self.status = status
                     
                     let incomingPlayers = status.players?.sample ?? []
                     let currentUUIDs = Set(self.playerDisplays.map {$0.uuid} )
@@ -58,12 +58,18 @@ class ServerStatusMonitor: ObservableObject {
                             await display.loadImage()
                         }
                     }
+                    
+                    self.status = status
                 } catch {
                     print("Error: \(error)")
                 }
             }
         }
 
+        timer?.fire()
+    }
+    
+    func refresh() {
         timer?.fire()
     }
 }

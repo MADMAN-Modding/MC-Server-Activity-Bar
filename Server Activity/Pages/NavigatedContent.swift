@@ -15,6 +15,7 @@ enum Page: String, CaseIterable {
 struct NavigatedContent: View {
     @State private var selectedPage: Page = .info
     @Binding var displays: [PlayerDisplay]
+    @ObservedObject var monitor: ServerStatusMonitor
 
     var body: some View {
         VStack(spacing: 0) {
@@ -25,6 +26,14 @@ struct NavigatedContent: View {
                     }
                 }
                 
+                // Refresh
+                Button {
+                    monitor.refresh()
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                }
+                
+                // Exit
                 Button {
                     NSApplication.shared.terminate(nil)
                 } label: {
