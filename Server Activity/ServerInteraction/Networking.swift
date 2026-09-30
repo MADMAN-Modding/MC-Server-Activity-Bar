@@ -7,6 +7,7 @@
 
 import Foundation
 import Network
+import os
 
 enum Networking {
 
@@ -24,13 +25,13 @@ enum Networking {
 
         let statusRequest = DataProcessing.buildStatusRequestPacket()
         try await send(statusRequest, over: connection)
-        
+
         let jsonString = try await readStatusResponse(from: connection)
-        
+
         guard let jsonData = jsonString.data(using: .utf8) else {
             throw NetworkingError.invalidUTF8
         }
-        
+
         return try JSONDecoder().decode(ServerStatus.self, from: jsonData)
     }
 
@@ -44,12 +45,20 @@ enum Networking {
         )
 
         return try await withCheckedThrowingContinuation { continuation in
+            let once = ResumeOnce()
             connection.stateUpdateHandler = { state in
+
                 switch state {
                 case .ready:
-                    continuation.resume(returning: connection)
+                    if once.claim() {
+                        continuation.resume(returning: connection)
+                    }
                 case .failed(let error):
-                    continuation.resume(throwing: error)
+                    if once.claim() { continuation.resume(throwing: error) }
+                case .cancelled:
+                    if once.claim() {
+                        continuation.resume(throwing: CancellationError())
+                    }
                 default:
                     break
                 }
@@ -151,5 +160,17 @@ enum Networking {
     enum NetworkingError: Error {
         case connectionClosedEarly
         case invalidUTF8
+    }
+}
+
+private nonisolated final class ResumeOnce: Sendable {
+    private let done = OSAllocatedUnfairLock(initialState: false)
+
+    func claim() -> Bool {
+        done.withLock { finished in
+            if finished { return false }
+            finished = true
+            return true
+        }
     }
 }
