@@ -1,4 +1,4 @@
-# NC Server Activity Bar
+# MC Server Activity Bar
 
 An activity bar that shows who's is on the configured Minecraft server.
 
