@@ -19,15 +19,25 @@ struct ServerInfo: View {
                     Text("No Players Online")
                 } else {
                     ForEach(displays) { display in
-                        HStack {
-                            display.image
-                            Text(display.username)
-                        }
+                        PlayerRow(player: display)
                     }
                 }
             }
         }
         .frame(maxHeight: 200)
         .fixedSize(horizontal: true, vertical: true)
+    }
+}
+
+private struct PlayerRow: View {
+    @ObservedObject var player: PlayerDisplay
+    
+    var body: some View {
+        HStack {
+            player.image
+                .resizable()
+                .frame(width: 32, height: 32)
+            Text(player.username)
+        }
     }
 }

@@ -16,6 +16,7 @@ struct NavigatedContent: View {
     @State private var selectedPage: Page = .info
     @Binding var displays: [PlayerDisplay]
     @ObservedObject var monitor: ServerStatusMonitor
+    
 
     var body: some View {
         VStack(spacing: 0) {

@@ -45,20 +45,38 @@ class ServerStatusMonitor: ObservableObject {
                     let incomingUUIDs = Set(incomingPlayers.map {$0.uuid} )
                     
                     let newUUIDs = incomingUUIDs.subtracting(currentUUIDs)
+                    
+                    
                     let departedUUIDs = currentUUIDs.subtracting(incomingUUIDs)
                     
                     // Remove players that have left
                     self.playerDisplays.removeAll { departedUUIDs.contains($0.uuid) }
                     
+                    var newPlayers: [String] = []
+                    
                     for player in incomingPlayers where newUUIDs.contains(player.uuid) {
                         let display = PlayerDisplay(uuid: player.uuid, username: player.name)
                         self.playerDisplays.append(display)
+                        
+                        newPlayers.append(player.name)
                         
                         Task {
                             await display.loadImage()
                         }
                     }
                     
+                    if !newPlayers.isEmpty {
+                        let joinTitle = if newPlayers.count > 1 {
+                            "Players Joined!"
+                        } else {
+                            "Player Joined!"
+                        }
+                    
+                        await NotificationManager.shared.sendNotification(players: newPlayers, title: joinTitle)
+                    }
+                    
+                    
+                        
                     self.status = status
                 } catch {
                     print("Error: \(error)")
